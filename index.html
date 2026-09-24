@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
-    <!-- Meta tags added due to entries.js deprecation on July 8th, 2025 -->
-    <meta name="description" content="A little quiz about the named colors. You try and guess what the color displayed is called.">
+    <meta name="description" content="Un pequeño quiz sobre los nombres de los colores. Tienes que adivinar cómo se llama el color que se muestra.">
     <meta name="author" content="Andrea Kaminski (Kazeheki)">
     <meta name="github" content="kazeheki">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Color Quiz</title>
+    <title>Quiz de Colores</title>
 
     <style>
       html,
@@ -87,8 +86,8 @@
   </head>
   <body>
     <div class="wrapper">
-      <h1>Background color name is ...?</h1>
-      <h2 id="score">Score</h2>
+      <h1>¿Cómo se llama este color de fondo?</h1>
+      <h2 id="score">Puntuación</h2>
       <h3 id="attempts"></h3>
       <div class="container">
         <button id="answer-1">a</button>
@@ -99,23 +98,54 @@
 
     <div id="end-screen" class="hidden">
       <div class="wrapper">
-        <h1>Congratulations!</h1>
+        <h1>¡Felicidades!</h1>
         <h2 name="score"></h2>
-        <button onclick="reset()">Restart</button>
+        <button onclick="reset()">Reiniciar</button>
       </div>
     </div>
 
     <script>
+      // Los valores CSS (izquierda) no se tocan porque el navegador los necesita
+      // tal cual para pintar el fondo. La traducción al español (derecha) es
+      // solo lo que se ve en los botones.
       const colors = {
-        reds: ["salmon", "indianred", "crimson", "firebrick", "red"],
-        oranges: ["coral", "tomato", "gold", "orange", "orangered"],
+        reds: [
+          "salmon",
+          "indianred",
+          "crimson",
+          "firebrick",
+          "red",
+          "darkred",
+          "maroon",
+          "brown",
+          "lightcoral",
+          "darksalmon"
+        ],
+        oranges: [
+          "coral",
+          "tomato",
+          "gold",
+          "orange",
+          "orangered",
+          "darkorange",
+          "chocolate",
+          "peru",
+          "sandybrown",
+          "sienna"
+        ],
         yellows: [
           "lemonchiffon",
           "papayawhip",
           "moccasin",
           "peachpuff",
           "khaki",
-          "yellow"
+          "yellow",
+          "lightgoldenrodyellow",
+          "palegoldenrod",
+          "goldenrod",
+          "darkgoldenrod",
+          "tan",
+          "lightyellow"
         ],
         greens: [
           "lawngreen",
@@ -128,7 +158,18 @@
           "greenyellow",
           "springgreen",
           "seagreen",
-          "olive"
+          "olive",
+          "darkgreen",
+          "darkolivegreen",
+          "darkseagreen",
+          "mediumseagreen",
+          "mediumspringgreen",
+          "palegreen",
+          "lightgreen",
+          "mediumaquamarine",
+          "darkkhaki",
+          "olivedrab",
+          "honeydew"
         ],
         cyans: [
           "cyan",
@@ -138,7 +179,13 @@
           "turquoise",
           "lightseagreen",
           "teal",
-          "cadetblue"
+          "cadetblue",
+          "darkcyan",
+          "darkturquoise",
+          "mediumturquoise",
+          "lightcyan",
+          "darkslategray",
+          "azure"
         ],
         blues: [
           "powderblue",
@@ -153,7 +200,14 @@
           "navy",
           "midnightblue",
           "mediumslateblue",
-          "slateblue"
+          "slateblue",
+          "darkslateblue",
+          "lightblue",
+          "lightslategray",
+          "lightsteelblue",
+          "mediumblue",
+          "skyblue",
+          "slategray"
         ],
         purples: [
           "lavender",
@@ -165,7 +219,13 @@
           "magenta",
           "blueviolet",
           "purple",
-          "indigo"
+          "indigo",
+          "darkorchid",
+          "darkviolet",
+          "darkmagenta",
+          "mediumorchid",
+          "mediumpurple",
+          "rebeccapurple"
         ],
         pinks: [
           "pink",
@@ -173,9 +233,131 @@
           "hotpink",
           "deeppink",
           "palevioletred",
-          "mediumvioletred"
+          "mediumvioletred",
+          "mistyrose",
+          "lavenderblush",
+          "lightsalmon",
+          "rosybrown"
         ]
       };
+
+      const traducciones = {
+        salmon: "salmón",
+        indianred: "rojo indio",
+        crimson: "carmesí",
+        firebrick: "rojo ladrillo",
+        red: "rojo",
+        darkred: "rojo oscuro",
+        maroon: "granate",
+        brown: "marrón",
+        lightcoral: "coral claro",
+        darksalmon: "salmón oscuro",
+        coral: "coral",
+        tomato: "tomate",
+        gold: "dorado",
+        orange: "naranja",
+        orangered: "rojo anaranjado",
+        darkorange: "naranja oscuro",
+        chocolate: "chocolate",
+        peru: "marrón anaranjado",
+        sandybrown: "marrón arena",
+        sienna: "siena",
+        lemonchiffon: "amarillo pastel",
+        papayawhip: "blanco papaya",
+        moccasin: "mocasín",
+        peachpuff: "melocotón claro",
+        khaki: "caqui",
+        yellow: "amarillo",
+        lightgoldenrodyellow: "amarillo dorado pálido",
+        palegoldenrod: "dorado pálido",
+        goldenrod: "dorado intenso",
+        darkgoldenrod: "dorado oscuro",
+        tan: "beige tostado",
+        lightyellow: "amarillo claro",
+        lawngreen: "verde césped",
+        chartreuse: "verde chartreuse",
+        limegreen: "verde lima",
+        lime: "lima",
+        forestgreen: "verde bosque",
+        green: "verde",
+        yellowgreen: "verde amarillento",
+        greenyellow: "amarillo verdoso",
+        springgreen: "verde primavera",
+        seagreen: "verde mar",
+        olive: "oliva",
+        darkgreen: "verde oscuro",
+        darkolivegreen: "verde oliva oscuro",
+        darkseagreen: "verde mar oscuro",
+        mediumseagreen: "verde mar medio",
+        mediumspringgreen: "verde primavera medio",
+        palegreen: "verde pálido",
+        lightgreen: "verde claro",
+        mediumaquamarine: "aguamarina medio",
+        darkkhaki: "caqui oscuro",
+        olivedrab: "verde oliva parduzco",
+        honeydew: "verde melón",
+        cyan: "cian",
+        aqua: "aguamarina claro",
+        aquamarine: "aguamarina",
+        paleturquoise: "turquesa pálido",
+        turquoise: "turquesa",
+        lightseagreen: "verde mar claro",
+        teal: "verde azulado",
+        cadetblue: "azul cadete",
+        darkcyan: "cian oscuro",
+        darkturquoise: "turquesa oscuro",
+        mediumturquoise: "turquesa medio",
+        lightcyan: "cian claro",
+        darkslategray: "gris pizarra oscuro",
+        azure: "azur",
+        powderblue: "azul polvo",
+        lightskyblue: "azul cielo claro",
+        deepskyblue: "azul cielo intenso",
+        dodgerblue: "azul dodger",
+        cornflowerblue: "azul aciano",
+        steelblue: "azul acero",
+        royalblue: "azul real",
+        blue: "azul",
+        darkblue: "azul oscuro",
+        navy: "azul marino",
+        midnightblue: "azul medianoche",
+        mediumslateblue: "azul pizarra medio",
+        slateblue: "azul pizarra",
+        darkslateblue: "azul pizarra oscuro",
+        lightblue: "azul claro",
+        lightslategray: "gris pizarra claro",
+        lightsteelblue: "azul acero claro",
+        mediumblue: "azul medio",
+        skyblue: "azul cielo",
+        slategray: "gris pizarra",
+        lavender: "lavanda",
+        thistle: "cardo",
+        plum: "ciruela",
+        violet: "violeta",
+        orchid: "orquídea",
+        fuchsia: "fucsia",
+        magenta: "magenta",
+        blueviolet: "violeta azulado",
+        purple: "púrpura",
+        indigo: "índigo",
+        darkorchid: "orquídea oscuro",
+        darkviolet: "violeta oscuro",
+        darkmagenta: "magenta oscuro",
+        mediumorchid: "orquídea medio",
+        mediumpurple: "púrpura medio",
+        rebeccapurple: "púrpura rebecca",
+        pink: "rosa",
+        lightpink: "rosa claro",
+        hotpink: "rosa intenso",
+        deeppink: "rosa profundo",
+        palevioletred: "rojo violáceo pálido",
+        mediumvioletred: "rojo violáceo medio",
+        mistyrose: "rosa brumoso",
+        lavenderblush: "rosa lavanda",
+        lightsalmon: "salmón claro",
+        rosybrown: "marrón rosado"
+      };
+
       var body = document.getElementsByTagName("body")[0];
       var scoreElem = document.getElementById("score");
       var attemptsElem = document.getElementById("attempts");
@@ -213,12 +395,12 @@
       function showEndScreen() {
         endScreen.classList.remove("hidden");
         endScreen.children.item(0).children.namedItem("score").innerHTML =
-          "You got " + score + " out of " + maxAttempst + " right";
+          "Acertaste " + score + " de " + maxAttempst;
       }
 
       function updateDisplays() {
-        scoreElem.innerHTML = "Score: " + score + "/" + maxAttempst;
-        attemptsElem.innerHTML = "Answered: " + attempts;
+        scoreElem.innerHTML = "Puntuación: " + score + "/" + maxAttempst;
+        attemptsElem.innerHTML = "Intentos: " + attempts;
       }
 
       function randomNumberBetween(min, max) {
@@ -227,7 +409,7 @@
 
       function setButton(id, val) {
         var button = document.getElementById("answer-" + id);
-        button.innerHTML = val;
+        button.innerHTML = traducciones[val] || val;
         button.dataset["value"] = val;
       }
 
